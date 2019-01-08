@@ -3,9 +3,8 @@ package com.paytm.daas.datastream.playground
 import org.apache.flink.api.common.functions.RichFlatMapFunction
 import org.apache.flink.api.common.state.{MapState, MapStateDescriptor}
 import org.apache.flink.contrib.streaming.state.RocksDBStateBackend
-import org.apache.flink.streaming.api.TimeCharacteristic
-import org.apache.flink.streaming.api.environment.CheckpointConfig.ExternalizedCheckpointCleanup
 import org.apache.flink.streaming.api.scala.{StreamExecutionEnvironment, _}
+import org.apache.flink.streaming.api.{CheckpointingMode, TimeCharacteristic}
 import org.apache.flink.util.Collector
 
 /**
@@ -19,14 +18,13 @@ object Driver3 {
   }
 
   def main(args: Array[String]): Unit = {
-    val stateBackend = new RocksDBStateBackend("file:///Users/mohammad/Projects/flink-playground/src/main/resources/db", true)
+    val checkpointDir = "file:///Users/mohammad/Projects/flink-playground/src/main/resources/db"
+    val stateBackend = new RocksDBStateBackend(checkpointDir, true)
     val env = StreamExecutionEnvironment.getExecutionEnvironment
     env.setStreamTimeCharacteristic(TimeCharacteristic.EventTime)
+    env.enableCheckpointing(1000, CheckpointingMode.EXACTLY_ONCE)
     env.setStateBackend(stateBackend)
-    env.setParallelism(2)
-    val config = env.getCheckpointConfig
-    config.enableExternalizedCheckpoints(ExternalizedCheckpointCleanup.RETAIN_ON_CANCELLATION)
-
+    env.setParallelism(1)
 
     val transactionStream = env.socketTextStream("localhost", 9999)
       .map(x => toTransactionEvent(x))
@@ -34,9 +32,7 @@ object Driver3 {
     val userStreamWithTime = transactionStream.
       assignTimestampsAndWatermarks(new GenericStreamTimestampAssigner[OwnershipEvent]).keyBy(_.navId)
 
-    userStreamWithTime.flatMap(new NavToUserStateRDB).uid("dfadf").print()
-
-
+    userStreamWithTime.flatMap(new NavToUserStateRDB).print()
     env.execute()
 
   }
@@ -50,7 +46,6 @@ class NavToUserStateRDB extends RichFlatMapFunction[OwnershipEvent, PortfolioUpd
   override def flatMap(value: OwnershipEvent, out: Collector[PortfolioUpdateEvent]): Unit = {
     val currentHolding = navToUserState.get(value.owning.userId)
     navToUserState.put(value.owning.userId, currentHolding + value.owning.share)
-    out.collect(PortfolioUpdateEvent(1, 1, 1, 1))
   }
 }
 
