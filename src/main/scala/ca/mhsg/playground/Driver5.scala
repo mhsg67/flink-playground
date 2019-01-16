@@ -1,4 +1,4 @@
-package com.paytm.daas.datastream.playground
+package ca.mhsg.playground
 
 import java.util.Properties
 

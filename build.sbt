@@ -1,8 +1,8 @@
 name                                    := "flink-playground"
 version                                 := "0.1-SNAPSHOT"
-organization                            := "com.paytm.daas"
+organization                            := "ca.mhsg"
 resolvers                               += "Confluent Repository" at "http://packages.confluent.io/maven/"
-assembly / mainClass                    := Some("com.paytm.daas.datastream.playground.Driver5")
+assembly / mainClass                    := Some("ca.mhsg.playground.Driver5")
 Compile / run                           := Defaults.runTask(Compile / fullClasspath, Compile / run / mainClass, Compile / run / runner).evaluated
 Compile / run / fork                    := false
 Global / cancelable                     := true

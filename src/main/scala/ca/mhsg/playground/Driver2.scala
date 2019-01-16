@@ -1,4 +1,4 @@
-package com.paytm.daas.datastream.playground
+package ca.mhsg.playground
 
 import org.apache.flink.api.common.state.{ListState, ListStateDescriptor, MapState, MapStateDescriptor}
 import org.apache.flink.streaming.api.TimeCharacteristic

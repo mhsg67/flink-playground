@@ -1,4 +1,4 @@
-package com.paytm.daas.datastream.playground
+package ca.mhsg.playground
 
 import org.apache.flink.streaming.api.TimeCharacteristic
 import org.apache.flink.streaming.api.functions.KeyedProcessFunction

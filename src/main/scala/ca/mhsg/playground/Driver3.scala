@@ -1,4 +1,4 @@
-package com.paytm.daas.datastream.playground
+package ca.mhsg.playground
 
 import org.apache.flink.api.common.functions.RichFlatMapFunction
 import org.apache.flink.api.common.state.{MapState, MapStateDescriptor}
