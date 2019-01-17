@@ -1,5 +1,8 @@
 package ca.mhsg.playground
 
+import ca.mhsg.playground.Constant.SchemaRegistryUrl
+import io.confluent.kafka.schemaregistry.client.CachedSchemaRegistryClient
+import org.apache.avro.Schema
 import org.apache.flink.streaming.api.functions.AssignerWithPunctuatedWatermarks
 import org.apache.flink.streaming.api.watermark.Watermark
 
@@ -29,4 +32,21 @@ case class CreditTrans(transId: Long, timestamp: Long, creditCardId: String, hol
 class TransactionStreamTimestampAssigner[A<:HasEventTime] extends AssignerWithPunctuatedWatermarks[A] {
   override def extractTimestamp(event: A, previousElementTimestamp: Long): Long = event.getEventTime
   override def checkAndGetNextWatermark(lastElement: A, extractedTimestamp: Long): Watermark = new Watermark(lastElement.getEventTime - 3000)
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+object Constant {
+  val SchemaRegistryUrl = "http://schema-registry:8082"
+  val SourceTopic = "source-topic"
+  val SinkTopic = "sink-topic"
+  val KafkaBootstrapServers = "kafka:9092"
+}
+
+object ConfluentSchemaManager {
+  private val schemaClient = new CachedSchemaRegistryClient(SchemaRegistryUrl, 8)
+
+  def getValueSchema(topic: String): Schema = getSchema(topic + "-value")
+
+  def getSchema(subject: String): Schema = schemaClient.getById(schemaClient.getLatestSchemaMetadata(subject).getId)
 }

@@ -22,6 +22,7 @@ val jacksonVersion        = "2.6.0"
 
 val avro                    = "org.apache.avro"                 %  "avro"                               % "1.8.2"
 val flinkKafkaConnector     = "org.apache.flink"                %% "flink-connector-kafka"              % flinkVersion
+val flinkCassandraConnector = "org.apache.flink"                %% "flink-connector-cassandra"          % flinkVersion
 val flinkRocksDb            = "org.apache.flink"                %% "flink-statebackend-rocksdb"         % flinkVersion
 val flinkScala              = "org.apache.flink"                %% "flink-scala"                        % flinkVersion    
 val flinkStreamingScala     = "org.apache.flink"                %% "flink-streaming-scala"              % flinkVersion    
@@ -38,10 +39,13 @@ val stringTemplate          = "org.antlr"                       %  "stringtempla
 lazy val root = (project in file(".")).
   settings(
     libraryDependencies ++= Seq(avro, flinkKafkaConnector, flinkRocksDb, flinkScala, flinkStreamingScala,
-      flinkTestUtil, flinkToSchemaRegistry, jacksonDatabind, jacksonJoda, jacksonScala, kafkaAvroSeri, scalaTest, 
-      stringTemplate),
+      flinkTestUtil, flinkToSchemaRegistry, jacksonDatabind, jacksonJoda, jacksonScala, kafkaAvroSeri, scalaTest,
+      stringTemplate, flinkCassandraConnector),
       assemblyMergeStrategy in assembly := {
-      case PathList("about.html") => MergeStrategy.rename
+      case PathList("about.html") =>
+        MergeStrategy.rename
+      case x if x.endsWith("io.netty.versions.properties") => 
+        MergeStrategy.discard
       case x =>
         val oldStrategy = (assemblyMergeStrategy in assembly).value
         oldStrategy(x)

@@ -30,3 +30,16 @@ services:
       SCHEMA_REGISTRY_KAFKASTORE_CONNECTION_URL: "zookeeper:2181"
       SCHEMA_REGISTRY_HOST_NAME: "schema-registry"
       SCHEMA_REGISTRY_LISTENERS: "http://0.0.0.0:8081"
+  mysql:
+    container_name: mysql
+    image: mysql:latest
+    ports:
+      - "3307:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: "root"
+  cassandra:
+    image: cassandra
+    container_name: cassandra
+    ports:
+      - 9042:9042
+      - 7199:7199
