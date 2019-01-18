@@ -40,6 +40,7 @@ object Constant {
   val SchemaRegistryUrl = "http://schema-registry:8082"
   val SourceTopic = "source-topic"
   val SinkTopic = "sink-topic"
+  val KeyedSinkTopic = "keyed-sink-topic"
   val KafkaBootstrapServers = "kafka:9092"
 }
 
