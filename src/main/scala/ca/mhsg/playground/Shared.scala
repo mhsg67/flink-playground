@@ -22,11 +22,14 @@ class GenericStreamTimestampAssigner[T] extends AssignerWithPunctuatedWatermarks
 trait HasEventTime {
   def getEventTime: Long
 }
+
+case class GenericTransaction(transId: Long, timestamp: Long, amount: String)
+
 case class DebitTrans(transId: Long, timestamp: Long, accountId: String, amount: String) extends HasEventTime {
-  override def getEventTime: Long = timestamp
+  def getEventTime: Long = timestamp
 }
 case class CreditTrans(transId: Long, timestamp: Long, creditCardId: String, holderName: String, amount: String) extends HasEventTime {
-  override def getEventTime: Long = timestamp
+  def getEventTime: Long = timestamp
 }
 
 class TransactionStreamTimestampAssigner[A<:HasEventTime] extends AssignerWithPunctuatedWatermarks[A] {
